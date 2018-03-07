@@ -26,7 +26,7 @@ def loadsonnets(dictname = 'data/Syllable_dictionary.txt', filename='data/shakes
     with open(dictname) as DICT:
         for line in DICT:
             tokens = line.strip().split()
-            word = tokens[0].lstrip(leftpunctuation).rstrip(rightpunctuation).lower()
+            word = tokens[0].lstrip(left_punctuation).rstrip(right_punctuation).lower()
             word2index[word] = counter
             counter = counter + 1
             word2syll[word] = tokens[1:]
@@ -51,7 +51,7 @@ def loadsonnets(dictname = 'data/Syllable_dictionary.txt', filename='data/shakes
                 if not insidesonnet:
                     insidesonnet = True
                 for word in tokens:
-                    word = word.lstrip(leftpunctuation).rstrip(rightpunctuation).lower()
+                    word = word.lstrip(left_punctuation).rstrip(right_punctuation).lower()
                     if word in word2index:
                         w = word2index[word]
                         sonnet.append(w)
@@ -76,7 +76,7 @@ def writeHMM(myHMM, filename=None):
         header = "{0}\t{1}\n".format(nHidden, nOmissions)
         FILE.write(header)
 
-        A_start_row = "\t".join(["{1.10e}".format(a_start) for a_start in myHMM.A_start]) '\n'
+        A_start_row = "\t".join(["{1.10e}".format(a_start) for a_start in myHMM.A_start]) + '\n'
         FILE.write(A_start_row)
         
         for row in myHMM.A:

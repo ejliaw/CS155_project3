@@ -1,4 +1,4 @@
-import our_utilities
+from our_utilities import loadsonnets, writeHMM, readHMM
 from HMM import unsupervised_HMM
 import sys
 
