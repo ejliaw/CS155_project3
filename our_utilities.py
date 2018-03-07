@@ -7,24 +7,30 @@ def loadsonnets(dictname = 'data/Syllable_dictionary.txt', filename='data/shakes
         word2index: a Python dictionary that maps the word to its integer index (0 based).
         index2word: a Python dictionary that maps integer indices back to words.
     """
+# end of line is a special emission that denotes the end of a line of poetry. It will follow the last word of each line, including after the last word of the last line of a poem.
     endofline = -1
+# punctuation is a string of all the punctionation marks present in shakespeare.txt
+    left_punctuation = ":.,?!;()" #Don't remove the initial apostrophe!
+    right_punctuation = ":.,'?!;()"
 
-# read in syllable dictionary
-    f = open(dictname, 'r')
+# Parse the Syllable_dictionary file.
     counter = 0
-    word2syll = {}
     word2index = {}
-    index2word = {}
-    for line in f:
-        Dict_item = line.strip().split(' ')
-        word = Dict_item[0].lower().strip(':,?!.;\'')
-        word2syll[word] = Dict_item[1:]
-        word2index[word] = counter
-        index2word[counter] = word
-        counter = counter + 1
+    word2syll = {}
+    with open(dictname) as DICT:
+        for line in DICT:
+            tokens = line.strip().split()
+            word = tokens[0].lstrip(leftpunctuation).rstrip(rightpunctuation).lower()
+            word2index[word] = counter
+            counter = counter + 1
+            word2syll[word] = tokens[1:]
 
+    word2index["\\"] = endofline
+    index2word = {word2index[key]:key for key in word2index}
+
+# Read in each sonnet.
     sonnets = []
-    sonnet = []
+    sonnet = [] # Necessary to avoid an UnboundLocalError?
     with open(filename) as FILE:
         insidesonnet = False
         for line in FILE:
@@ -40,6 +46,7 @@ def loadsonnets(dictname = 'data/Syllable_dictionary.txt', filename='data/shakes
                 if not insidesonnet:
                     insidesonnet = True
                 for word in tokens:
+                    word = word.lstrip(leftpunctuation).rstrip(rightpunctuation).lower()
                     if word in word2index:
                         w = word2index[word]
                         sonnet.append(w)
@@ -48,14 +55,3 @@ def loadsonnets(dictname = 'data/Syllable_dictionary.txt', filename='data/shakes
                 sonnet.append(endofline)
 
     return sonnets, word2syll, word2index, index2word
-#    word2index = {}
-#    word2nsyll = []
-#    index = 0
-#    #dictre = re.compile(r'([A-Za-z\'\-]+)\s(E[0-9]+)')
-#    with DICT as open(dictname):
-#        for line in DICT:
-#            tokens = line.strip().split()
-#
-#            if 
-        #word2syll[Dict_item[0]] = Dict_iterm[1:]
-
