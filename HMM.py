@@ -57,6 +57,7 @@ class HiddenMarkovModel:
         if X_dict == None:
             X_dict = {} 
         else: self.X_dict = X_dict
+        self.n_epochs = 0
 
 
     def viterbi(self, x):
@@ -325,6 +326,7 @@ class HiddenMarkovModel:
 
         # Similarly, a comment starting with 'M' refers to the fact that
         # the code under the comment is part of the M-step.
+        self.n_epochs = N_iters
 
         for iteration in range(1, N_iters + 1):
             if iteration % 10 == 0:

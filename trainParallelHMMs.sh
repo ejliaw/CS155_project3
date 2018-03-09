@@ -10,6 +10,7 @@ nepochs=1000
 cd $homedir
 
 #for L in 2; do
-for L in 1 2 4 8 12 16; do
+#for L in 1 2 4 8 12 16; do
+for L in 32 64; do
     python trainOneHMM.py $L $nepochs &
 done

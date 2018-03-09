@@ -1,4 +1,5 @@
 import time
+from HMM import *
 
 def loadsonnets(dictname = 'data/Syllable_dictionary.txt', filename='data/shakespeare.txt'):
     """
@@ -67,25 +68,26 @@ def writeHMM(myHMM, filename=None):
     '''
     nHidden = myHMM.L
     nOmissions = myHMM.D
+    nEpochs = myHMM.n_epochs
 
     if filename == None:
         uid = time.strftime('%d%H%M%S')
-        filename = "HMM_{0:d}_{1}.txt".format(nHidden, uid)
+        filename = "HMM_{0:d}_{1:d}_{2}.txt".format(nHidden, nEpochs, uid)
 
     with open(filename, 'w') as FILE: 
 
         header = "{0}\t{1}\n".format(nHidden, nOmissions)
         FILE.write(header)
 
-        A_start_row = "\t".join(["{1.10e}".format(a_start) for a_start in myHMM.A_start]) + '\n'
+        A_start_row = "\t".join(["{:1.10e}".format(a_start) for a_start in myHMM.A_start]) + '\n'
         FILE.write(A_start_row)
         
         for row in myHMM.A:
-            A_row = "\t".join(["{1.10e}".format(a_ij) for a_ij in row]) + '\n'
+            A_row = "\t".join(["{:1.10e}".format(a_ij) for a_ij in row]) + '\n'
             FILE.write(A_row)
 
         for row in myHMM.O:
-            O_row = "\t".join(["{1.10e}".format(o_ij) for o_ij in row]) + '\n'
+            O_row = "\t".join(["{:1.10e}".format(o_ij) for o_ij in row]) + '\n'
             FILE.write(O_row)
 
 def readHMM(filename):
@@ -96,7 +98,7 @@ def readHMM(filename):
         header = FILE.readline()
         L, D = [int(x) for x in header.strip().split()]
 
-        A_start_row = header.readline()
+        A_start_row = FILE.readline()
         A_start = [float(x) for x in A_start_row.strip().split()]
         
         A = []
@@ -109,7 +111,7 @@ def readHMM(filename):
             O_row = FILE.readline()
             O.append([float(x) for x in O_row.strip().split()])
     
-    myHMM = HMM(A, O)
+    myHMM = HiddenMarkovModel(A, O)
     myHMM.A_start = A_start
     if L != myHMM.L: print("error in L")
     if D != myHMM.D: print("error in D")
