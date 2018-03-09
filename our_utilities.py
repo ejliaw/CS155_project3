@@ -12,8 +12,9 @@ def loadsonnets(dictname = 'data/Syllable_dictionary.txt', filename='data/shakes
 # end of line is a special emission that denotes the end of a line of poetry. It will follow the last word of each line, including after the last word of the last line of a poem.
     endofline = 0 #-1
 # punctuation is a string of all the punctionation marks present in shakespeare.txt
-    left_punctuation = ":.,?!;()" #Don't remove the initial apostrophe!
-    right_punctuation = ":.,'?!;()"
+    #left_punctuation = ":.,?!;()" #Don't remove the initial apostrophe!
+    #right_punctuation = ":.,'?!;()"
+    punctuation = ":.,'?!;()"
 
 # Parse the Syllable_dictionary file.
     counter = 0
@@ -26,7 +27,7 @@ def loadsonnets(dictname = 'data/Syllable_dictionary.txt', filename='data/shakes
     with open(dictname) as DICT:
         for line in DICT:
             tokens = line.strip().split()
-            word = tokens[0].lstrip(left_punctuation).rstrip(right_punctuation).lower()
+            word = tokens[0].strip(punctuation).lower() #.lstrip(left_punctuation).rstrip(right_punctuation).lower()
             word2index[word] = counter
             counter = counter + 1
             word2syll[word] = tokens[1:]
@@ -51,7 +52,7 @@ def loadsonnets(dictname = 'data/Syllable_dictionary.txt', filename='data/shakes
                 if not insidesonnet:
                     insidesonnet = True
                 for word in tokens:
-                    word = word.lstrip(left_punctuation).rstrip(right_punctuation).lower()
+                    word = word.strip(punctuation).lower() #.lstrip(left_punctuation).rstrip(right_punctuation).lower()
                     if word in word2index:
                         w = word2index[word]
                         sonnet.append(w)

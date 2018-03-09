@@ -13,7 +13,7 @@ class HiddenMarkovModel:
     Class implementation of Hidden Markov Models.
     '''
 
-    def __init__(self, A, O):
+    def __init__(self, A, O, X_dict=None):
         '''
         Initializes an HMM. Assumes the following:
             - States and observations are integers starting from 0. 
@@ -45,6 +45,8 @@ class HiddenMarkovModel:
                         is the probability of transitioning from the start
                         state to state i. For simplicity, we assume that
                         this distribution is uniform.
+
+            X_dict:     This is the word2index dictionary.
         '''
 
         self.L = len(A)
@@ -52,6 +54,9 @@ class HiddenMarkovModel:
         self.A = A
         self.O = O
         self.A_start = [1. / self.L for _ in range(self.L)]
+        if X_dict == None:
+            X_dict = {} 
+        else: self.X_dict = X_dict
 
 
     def viterbi(self, x):
@@ -141,6 +146,11 @@ class HiddenMarkovModel:
         '''
 
         M = len(x)      # Length of sequence.
+        #print("length of this sequence is: {}".format(M))
+        #print("sequence is:")
+        #print(x)
+        #print("shape of O is: {} {}".format(len(self.O), len(self.O[0])))
+        #print("L is: {}".format(self.L))
         alphas = [[0. for _ in range(self.L)] for _ in range(M + 1)]
 
         # Note that alpha_j(0) is already correct for all j's.
@@ -158,9 +168,13 @@ class HiddenMarkovModel:
                 # the probabilities of all paths from the start state to
                 # the current state.
                 for prev in range(self.L):
-                    prob += alphas[t][prev] \
-                            * self.A[prev][curr] \
-                            * self.O[curr][x[t]]
+                    try:
+                        prob += alphas[t][prev] \
+                                * self.A[prev][curr] \
+                                * self.O[curr][x[t]]
+                    except:
+                        print(curr)
+                        print(t)
 
                 # Store the accumulated probability.
                 alphas[t + 1][curr] = prob
@@ -531,7 +545,7 @@ def supervised_HMM(X, Y):
     return HMM
 
 
-def unsupervised_HMM(X, n_states, N_iters):
+def unsupervised_HMM(X, X_dict, n_states, N_iters):
     '''
     Helper function to train an unsupervised HMM. The function determines the
     number of unique observations in the given data, initializes
@@ -548,10 +562,12 @@ def unsupervised_HMM(X, n_states, N_iters):
         N_iters:    The number of iterations to train on.
     '''
 
-    # Make a set of observations.
-    observations = set()
-    for x in X:
-        observations |= set(x)
+    ## Make a set of observations.
+    #observations = set()
+    #for x in X:
+    #    observations |= set(x)
+
+    observations = X_dict
     
     # Compute L and D.
     L = n_states
@@ -576,5 +592,7 @@ def unsupervised_HMM(X, n_states, N_iters):
     # Train an HMM with unlabeled data.
     HMM = HiddenMarkovModel(A, O)
     HMM.unsupervised_learning(X, N_iters)
+
+    HMM.X_dict = X_dict
 
     return HMM
