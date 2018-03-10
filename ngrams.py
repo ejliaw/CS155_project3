@@ -26,7 +26,7 @@ seed = [word2index[word] for word in seedsentence.split()]
 prevs = tuple(seed) #tuple(seed[:-1]) #curr = int(seed[-1])
 how_sparse_debug = 0
 newsonnet = [seed] #newsonnet = []
-n_syllables = 2
+n_syllables = len(seed)
 for i in range(14):
     line = []
     print("line: {}".format(i))
@@ -39,9 +39,16 @@ for i in range(14):
         if len(choices) > 0:
             newword = int(np.random.choice(choices, 1))
         else:
-            newword = int(np.random.choice(nwords, 1))
-            print(prevs)
+            #newword = int(np.random.choice(nwords, 1))
             how_sparse_debug += 1
+            print("aww... fell off the track with ", end="")
+            print(prevs, [index2word[w] for w in prevs])
+            while len(choices) <= 0:
+                rline = int(np.random.choice(len(newsonnet), 1))
+                rword = int(np.random.choice(len(newsonnet[rline])-1, 1))
+                prevs = tuple(newsonnet[rline][rword:rword+1])
+                choices = jointprob[prevs]
+                maxattempts = max(len(choices), 10)
         line.append(newword)
         #newsonnet.append(newword)
         if newword == 0: # The end of line character.
