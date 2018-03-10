@@ -148,40 +148,43 @@ class HiddenMarkovModel:
         '''
 
         M = len(x)      # Length of sequence.
+        A_start = self.A_start
+        O = self.O
+
             #print("length of this sequence is: {}".format(M))
             #print("sequence is:")
             #print(x)
             #print("shape of O is: {} {}".format(len(self.O), len(self.O[0])))
             #print("L is: {}".format(self.L))
         #alphas = [[0. for _ in range(self.L)] for _ in range(M + 1)]
-        alphas = np.zeros((L, M))
+        alphas = np.zeros((L, M, 2))
 
         # Note that alpha_j(0) is already correct for all j's.
         # Calculate alpha_j(1) for all j's.
-        for curr in range(self.L):
-            alphas[1][curr] = self.A_start[curr] * self.O[curr][x[0]]
-            alphas[0, curr] = 
+        #for curr in range(self.L):
+            #alphas[1][curr] = self.A_start[curr] * self.O[curr][x[0]]
+        alphas[0, :, 0] = A_start[:] * O[:, x[0]]
 
         # Calculate alphas throughout sequence.
-        for t in range(1, M):
+        #for t in range(1, M):
+        for t in range(M):
+
             # Iterate over all possible current states.
             for curr in range(self.L):
-                prob = 0
+                #prob = 0
 
-                # Iterate over all possible previous states to accumulate
-                # the probabilities of all paths from the start state to
-                # the current state.
-                for prev in range(self.L):
-                    try:
-                        prob += alphas[t][prev] \
-                                * self.A[prev][curr] \
-                                * self.O[curr][x[t]]
-                    except:
-                        print(curr)
-                        print(t)
+                ## Iterate over all possible previous states to accumulate
+                ## the probabilities of all paths from the start state to
+                ## the current state.
+                #for prev in range(self.L):
+                #    prob += alphas[t][prev] \
+                #            * self.A[prev][curr] \
+                #            * self.O[curr][x[t]]
 
                 # Store the accumulated probability.
-                alphas[t + 1][curr] = prob
+                #alphas[t + 1][curr] = prob
+                alphas[t+1, curr, 0] = np.sum(alphas[:, t, 1] * A[:, curr] * O[curr, x[t])
+                alphas[t+1, curr, 1] = np.sum(alphas[:, t, 0] * A[:, curr] * O[curr, x[t])
 
             if normalize:
                 norm = sum(alphas[t + 1])
