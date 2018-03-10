@@ -23,6 +23,9 @@ for sonnet in sonnets:
 
 seedsentence = "shall i" #compare"
 seed = [word2index[word] for word in seedsentence.split()]
+if len(seed) != n-1:
+    print("your seed is the wrong length")
+    exit(0)
 prevs = tuple(seed) #tuple(seed[:-1]) #curr = int(seed[-1])
 how_sparse_debug = 0
 newsonnet = [seed] #newsonnet = []
@@ -43,12 +46,18 @@ for i in range(14):
             how_sparse_debug += 1
             print("aww... fell off the track with ", end="")
             print(prevs, [index2word[w] for w in prevs])
-            while len(choices) <= 0:
-                rline = int(np.random.choice(len(newsonnet), 1))
-                rword = int(np.random.choice(len(newsonnet[rline])-1, 1))
-                prevs = tuple(newsonnet[rline][rword:rword+1])
+            attempts2 = 0
+            while len(choices) <= 0 and attempts2 < 10:
+                rline = int(np.random.choice(len(newsonnet)-2, 1)) + 1 # Avoid the very first line, which has "shall i"
+                print(rline)
+                rword = int(np.random.choice(len(newsonnet[rline])-n, 1))
+                print(rword)
+                prevs = tuple(newsonnet[rline][rword:rword+n])
+                print(prevs)
                 choices = jointprob[prevs]
+                newword = int(np.random.choice(choices, 1))
                 maxattempts = max(len(choices), 10)
+                attempts2 += 1
         line.append(newword)
         #newsonnet.append(newword)
         if newword == 0: # The end of line character.
