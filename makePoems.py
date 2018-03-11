@@ -5,6 +5,35 @@ from our_utilities import *
 
 sonnets, word2syll, word2index, index2word = loadsonnets()
 
+# make syllable dictionaries for end of line and middle of lines.
+word2syllEnd = {}
+word2syllMiddle = {}
+for i in word2syll:
+    word2syllMiddle[i] =[]
+    for j in range(len(word2syll[i])):
+        if word2syll[i][j][0] == 'E':
+            word2syllEnd[i]=list(word2syll[i][j])
+        else:
+            word2syllMiddle[i].append(word2syll[i][j])
+
+for i in word2syll:
+    if i not in word2syllEnd:
+        word2syllEnd[i]=word2syll[i]
+        
+for i in word2syllEnd:
+    if word2syllEnd[i][0] =='E':
+        word2syllEnd[i] = int(word2syllEnd[i][1])
+    else:
+        val = 0
+        for j in range(len(word2syllEnd[i])):
+            val = val + int(word2syllEnd[i][j])/len(word2syllEnd[i])
+        word2syllEnd[i] = val
+for i in word2syllMiddle:
+    val = 0
+    for j in range(len(word2syllMiddle[i])):
+        val = val + int(word2syllMiddle[i][j])/len(word2syllMiddle[i])
+    word2syllMiddle[i] = val
+        
 hmmfiles = ["HMM_32_1000_09101554.txt" ]  #sys.argv[1:]
 
 HMMs = []
@@ -31,10 +60,15 @@ for HMM in HMMs:
             line = []
             line_counter = line_counter + 1
             syll_counter = 0
-        else:
-            if index2word[w] != '\\':
+        elif index2word[w] != '\\':
+            if syll_counter + word2syllMiddle[index2word[w]]> 10:
                 line.append(index2word[w])
-                syll_counter = syll_counter + int(word2syll[index2word[w]][-1][-1])        
+                syll_counter = syll_counter + int(word2syllEnd[index2word[w]])        
+            else: 
+                line.append(index2word[w])
+                syll_counter = syll_counter + int(word2syllMiddle[index2word[w]]) 
+                
+            
     print('end of sonnet')
     all_poem.append(poem)
 print('============================================================================')
