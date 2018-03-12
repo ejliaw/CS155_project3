@@ -4,6 +4,7 @@ import numpy as np
 from collections import defaultdict
 
 sonnets, word2syll, word2index, index2word = loadsonnets()
+endofline = 0
 
 nwords = len(word2index.keys())
 n = 3
@@ -18,6 +19,11 @@ for sonnet in sonnets:
         prevs = tuple(sonnet[i:i+n-1])
         output = int(sonnet[i+n-1]) #sonnet[i+n-1:i+n] has an extra list around it.
         jointprob[prevs].append(output)
+    ## end of sonnet edge case
+    #prevs = tuple(sonnet[(length-n+1):length])
+    #output = endofline
+    #jointprob[prevs].append(output)
+
 
 #normsum = np.sum(jointprob, axis=-1) #jointprob = jointprob / np.expand_dim(normsum, n-1)
 
@@ -32,11 +38,12 @@ newsonnet = [seed] #newsonnet = []
 n_syllables = len(seed)
 for i in range(14):
     line = []
-    print("line: {}".format(i))
+    #print("line: {}".format(i))
     attempts = 0
     while True: # A do while loop in python #P = jointprob[prevs]
-        print(prevs, n_syllables)
+        #print(prevs, n_syllables)
         choices = jointprob[prevs]
+        #print("choices: {}".format(len(choices)))
         maxattempts = max(len(choices), 10)
         #if prevs in jointprob: # Doesn't work for defaultdicts!
         if len(choices) > 0:
@@ -52,12 +59,13 @@ for i in range(14):
                 print(rline)
                 rword = int(np.random.choice(len(newsonnet[rline])-n, 1))
                 print(rword)
-                prevs = tuple(newsonnet[rline][rword:rword+n])
+                prevs = tuple(newsonnet[rline][rword:rword+n-1])
                 print(prevs)
                 choices = jointprob[prevs]
-                newword = int(np.random.choice(choices, 1))
+                print("choices: {}".format(len(choices)))
                 maxattempts = max(len(choices), 10)
                 attempts2 += 1
+            newword = int(np.random.choice(choices, 1))
         line.append(newword)
         #newsonnet.append(newword)
         if newword == 0: # The end of line character.
