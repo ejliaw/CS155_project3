@@ -34,7 +34,7 @@ for i in word2syllMiddle:
         val = val + int(word2syllMiddle[i][j])/len(word2syllMiddle[i])
     word2syllMiddle[i] = val
         
-hmmfiles = ["HMM_32_1000_09101554.txt" ]  #sys.argv[1:]
+hmmfiles = ["HMM_64_1000_11092557.txt" ]  #sys.argv[1:]
 
 HMMs = []
 for hmmfile in hmmfiles:

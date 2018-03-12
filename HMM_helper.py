@@ -51,7 +51,7 @@ def text_to_wordcloud(text, max_words=50, title='', show=True):
 
     return wordcloud
 
-def states_to_wordclouds(hmm, obs_map, max_words=50, show=True):
+def states_to_wordclouds(hmm, obs_map, max_words=10, show=True):
     # Initialize.
     M = 100000
     n_states = len(hmm.A)
@@ -170,7 +170,7 @@ def animate_emission(hmm, obs_map, M=8, height=12, width=12, delay=1):
     # Initialize.
     n_states = len(hmm.A)
     obs_map_r = obs_map_reverser(obs_map)
-    wordclouds = states_to_wordclouds(hmm, obs_map, max_words=20, show=False)
+    wordclouds = states_to_wordclouds(hmm, obs_map, max_words=10, show=False)
 
     # Initialize plot.    
     fig, ax = plt.subplots()
