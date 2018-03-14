@@ -54,7 +54,7 @@ for i in range(14):
             print("aww... fell off the track with ", end="")
             print(prevs, [index2word[w] for w in prevs])
             attempts2 = 0
-            while len(choices) <= 0 and attempts2 < 10:
+            while len(choices) <= 1 and attempts2 < 10:
                 rline = int(np.random.choice(len(newsonnet)-2, 1)) + 1 # Avoid the very first line, which has "shall i"
                 print(rline)
                 rword = int(np.random.choice(len(newsonnet[rline])-n, 1))
